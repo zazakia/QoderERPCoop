@@ -1,7 +1,7 @@
 import { renderWithProviders, mockUser, mockSession } from '@/test/test-utils';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import LoginPage from '../../auth/login/page';
+import LoginPage from '../page';
 
 // Integration test for login flow
 describe('Login Integration', () => {

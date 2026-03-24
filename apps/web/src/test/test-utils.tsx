@@ -27,10 +27,22 @@ export const mockSession = {
   user: mockUser,
 };
 
+// Mock permissions context
+const mockPermissionsContext = {
+  hasPermission: jest.fn(() => true),
+  userRole: 'operator' as const,
+};
+
 // Custom render function with providers
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialUser?: typeof mockUser | null;
   queryClient?: QueryClient;
+  authOverrides?: Partial<{
+    loading: boolean;
+    user: typeof mockUser | null;
+    session: typeof mockSession | null;
+  }>;
+  permissionsOverrides?: Partial<typeof mockPermissionsContext>;
 }
 
 export function renderWithProviders(
@@ -43,14 +55,15 @@ export function renderWithProviders(
         mutations: { retry: false },
       },
     }),
+    authOverrides = {},
     ...renderOptions
   }: CustomRenderOptions = {}
 ) {
-  // Mock AuthContext value
+  // Mock AuthContext value with overrides
   const mockAuthContext = {
-    user: initialUser,
-    session: initialUser ? mockSession : null,
-    loading: false,
+    user: authOverrides.user !== undefined ? authOverrides.user : initialUser,
+    session: (authOverrides.user !== undefined ? authOverrides.user : initialUser) ? mockSession : null,
+    loading: authOverrides.loading !== undefined ? authOverrides.loading : false,
     signIn: jest.fn(),
     signUp: jest.fn(),
     signOut: jest.fn(),
@@ -58,12 +71,21 @@ export function renderWithProviders(
     updateProfile: jest.fn(),
   };
 
+  // Create a stable context value to prevent re-renders
+  const StableAuthProvider = ({ children }: { children: React.ReactNode }) => {
+    return (
+      <AuthProvider value={mockAuthContext}>
+        {children}
+      </AuthProvider>
+    );
+  };
+
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthProvider value={mockAuthContext}>
+        <StableAuthProvider>
           {children}
-        </AuthProvider>
+        </StableAuthProvider>
       </QueryClientProvider>
     );
   }

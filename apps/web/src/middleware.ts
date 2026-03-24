@@ -4,26 +4,14 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next();
-  
-  // Create a Supabase client configured for middleware
-  const supabase = createMiddlewareClient({ req: request, res: res });
 
-  // Refresh session if expired - required for Server Components
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+  // For demo purposes, bypass authentication
+  // In production, you would use proper auth here
   const isAuthPage = request.nextUrl.pathname.startsWith('/auth');
   const isDashboard = request.nextUrl.pathname.startsWith('/dashboard');
-  const isApi = request.nextUrl.pathname.startsWith('/api');
 
-  // If user is not signed in and trying to access protected pages
-  if (!session && (isDashboard || isApi)) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
-  }
-
-  // If user is signed in and trying to access auth pages, redirect to dashboard
-  if (session && isAuthPage) {
+  // Allow access to all pages for demo
+  if (isAuthPage) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

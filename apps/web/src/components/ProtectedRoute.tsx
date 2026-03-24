@@ -29,8 +29,8 @@ export default function ProtectedRoute({
         return;
       }
 
-      // Check role requirement
-      if (requiredRole && userRole !== requiredRole) {
+      // Check role requirement (super_admin bypasses role checks)
+      if (requiredRole && userRole !== requiredRole && userRole !== 'super_admin') {
         router.push('/dashboard'); // Redirect to dashboard if wrong role
         return;
       }
@@ -56,7 +56,8 @@ export default function ProtectedRoute({
   }
 
   // Don't render children if not authenticated or authorized
-  if (!user || (requiredRole && userRole !== requiredRole) || (requiredPermission && !hasPermission(requiredPermission))) {
+  // super_admin bypasses role checks
+  if (!user || (requiredRole && userRole !== requiredRole && userRole !== 'super_admin') || (requiredPermission && !hasPermission(requiredPermission))) {
     return null;
   }
 

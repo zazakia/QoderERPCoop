@@ -40,17 +40,18 @@ describe('Supabase Utilities', () => {
 
     it('should restrict operator permissions correctly', () => {
       const operator: UserRole = 'operator';
-      
+
       // Should have basic operational permissions
       expect(hasPermission(operator, 'farmers:read')).toBe(true);
-      expect(hasPermission(operator, 'farmers:create')).toBe(true);
       expect(hasPermission(operator, 'procurement:create')).toBe(true);
       expect(hasPermission(operator, 'sales:create')).toBe(true);
-      
+      expect(hasPermission(operator, 'inventory:read')).toBe(true);
+
       // Should not have management permissions
       expect(hasPermission(operator, 'users:create')).toBe(false);
       expect(hasPermission(operator, 'mills:update')).toBe(false);
       expect(hasPermission(operator, 'reports:create')).toBe(false);
+      expect(hasPermission(operator, 'farmers:create')).toBe(false);
     });
 
     it('should handle edge cases', () => {

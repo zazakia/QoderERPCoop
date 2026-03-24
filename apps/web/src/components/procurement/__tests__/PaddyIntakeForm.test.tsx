@@ -5,7 +5,7 @@
 
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, mockFarmers } from '../../test-utils';
+import { renderWithProviders, mockFarmers } from '../../../test/test-utils';
 import { generateMockData, checkAccessibility } from '../../setup';
 import PaddyIntakeForm from '../PaddyIntakeForm';
 
